@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SolarÓptimo — Ángulo ideal para máxima eficiencia</title>
+<link rel="stylesheet" href="css/styles.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ══════════════ SIDEBAR ══════════════ -->
+<aside id="sidebar">
+  <div class="brand">
+    <span class="brand-icon">☀️</span>
+    <h1>Solar<span>Óptimo</span></h1>
+    <p>Ángulo ideal para máxima eficiencia solar</p>
+  </div>
+  <nav>
+    <div class="nav-item active" data-page="inicio">
+      <span class="icon">🏠</span> Inicio
+    </div>
+    <div class="nav-item" data-page="analisis">
+      <span class="icon">📊</span> Análisis mensual
+    </div>
+    <div class="nav-item" data-page="grafica">
+      <span class="icon">📈</span> Gráfica E(θ)
+    </div>
+    <div class="nav-item" data-page="recomendaciones">
+      <span class="icon">💡</span> Recomendaciones
+    </div>
+    <div class="nav-item" data-page="info">
+      <span class="icon">📐</span> Matemáticas
+    </div>
+    <div class="nav-item" data-page="acerca">
+      <span class="icon">👤</span> Acerca de
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="tag">Energía limpia</div>
+    <p>Maximiza la captación solar con el ángulo correcto en cada época del año.</p>
+  </div>
+</aside>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<main id="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-text">
+      <h2>Encuentra el ángulo ideal<br>para <em>máxima eficiencia</em> solar</h2>
+      <p>Selecciona un mes y tu latitud para obtener el ángulo óptimo calculado con derivadas.</p>
+    </div>
+    <svg class="hero-panel-svg" width="180" height="110" viewBox="0 0 180 110">
+      <line x1="20" y1="95" x2="160" y2="95" stroke="rgba(255,255,255,.3)" stroke-width="2"/>
+      <line x1="90" y1="95" x2="90"  y2="75" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
+      <g transform="translate(90,75) rotate(-28)">
+        <rect x="-45" y="-6" width="90" height="36" rx="3" fill="#1a6fd4" stroke="rgba(255,255,255,.5)" stroke-width="1.5"/>
+        <line x1="-45" y1="6"  x2="45" y2="6"  stroke="rgba(255,255,255,.25)" stroke-width="1"/>
+        <line x1="-45" y1="18" x2="45" y2="18" stroke="rgba(255,255,255,.25)" stroke-width="1"/>
+        <line x1="-15" y1="-6" x2="-15" y2="30" stroke="rgba(255,255,255,.25)" stroke-width="1"/>
+        <line x1="15"  y1="-6" x2="15"  y2="30" stroke="rgba(255,255,255,.25)" stroke-width="1"/>
+      </g>
+      <path d="M90,95 A28,28 0 0,0 116,88" fill="none" stroke="#f5a623" stroke-width="1.8" stroke-dasharray="3,2"/>
+      <text x="118" y="84" fill="#f5a623" font-size="13" font-weight="700" font-family="Segoe UI,sans-serif">θ</text>
+      <circle cx="150" cy="22" r="14" fill="#f5a623" opacity=".9"/>
+      <g stroke="#f5a623" stroke-width="2" opacity=".7">
+        <line x1="150" y1="2"  x2="150" y2="-2"/>
+        <line x1="163" y1="9"  x2="166" y2="6"/>
+        <line x1="168" y1="22" x2="172" y2="22"/>
+        <line x1="163" y1="35" x2="166" y2="38"/>
+        <line x1="137" y1="9"  x2="134" y2="6"/>
+        <line x1="132" y1="22" x2="128" y2="22"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ════ PAGE: INICIO ════ -->
+  <div id="page-inicio" class="page active">
+
+    <div class="grid-2">
+      <!-- Formulario -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> Parámetros de cálculo</div>
+
+        <label>Buscar ciudad</label>
+        <div style="position:relative;margin-bottom:14px">
+          <input type="text" id="city-input" placeholder="Ej: Santiago, Temuco, Buenos Aires…"
+            autocomplete="off"
+            oninput="onCityInput()" onkeydown="onCityKey(event)"/>
+          <ul id="city-dropdown" style="
+            display:none; position:absolute; top:100%; left:0; right:0;
+            background:#fff; border:1px solid var(--border); border-top:none;
+            border-radius:0 0 8px 8px; list-style:none;
+            max-height:200px; overflow-y:auto; z-index:999;
+            box-shadow:0 8px 20px rgba(0,0,0,.1)"></ul>
+        </div>
+
+        <div class="lat-row">
+          <div>
+            <label>Latitud (°)</label>
+            <input type="number" id="lat-input" value="-38.7" step="0.1" min="-90" max="90" placeholder="-38.7"/>
+          </div>
+          <button class="btn btn-loc" onclick="useMyLocation()">📍 GPS</button>
+        </div>
+        <div id="city-tag" style="display:none;font-size:.78rem;color:var(--blue);margin-top:-8px;margin-bottom:12px;align-items:center;gap:6px">
+          <span>📌</span><span id="city-tag-text"></span>
+        </div>
+
+        <label>Mes</label>
+        <select id="month-sel">
+          <option value="1">Enero</option><option value="2">Febrero</option>
+          <option value="3">Marzo</option><option value="4">Abril</option>
+          <option value="5" selected>Mayo</option><option value="6">Junio</option>
+          <option value="7">Julio</option><option value="8">Agosto</option>
+          <option value="9">Septiembre</option><option value="10">Octubre</option>
+          <option value="11">Noviembre</option><option value="12">Diciembre</option>
+        </select>
+
+        <label>Año</label>
+        <select id="year-sel">
+          <option value="2024">2024</option>
+          <option value="2025" selected>2025</option>
+          <option value="2026">2026</option>
+        </select>
+
+        <button class="btn" onclick="calcular()">📐 Calcular ángulo óptimo</button>
+      </div>
+
+      <!-- Resultados -->
+      <div>
+        <div class="results-header">Resultados para: <strong id="res-label">Mayo 2025</strong></div>
+        <div class="grid-3" style="margin-bottom:14px">
+          <div class="metric-card">
+            <div class="metric-icon green">🔺</div>
+            <div>
+              <div class="metric-val green" id="res-angle">—</div>
+              <div class="metric-lbl">Ángulo óptimo (°)</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon gold">☀️</div>
+            <div>
+              <div class="metric-val gold" id="res-rad">—</div>
+              <div class="metric-lbl">kWh/m²/día</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon blue">📊</div>
+            <div>
+              <div class="metric-val blue" id="res-eff">—</div>
+              <div class="metric-lbl">Eficiencia relativa</div>
+            </div>
+          </div>
+        </div>
+        <div class="info-box">
+          <span class="info-icon">ℹ️</span>
+          <span id="res-tip">Ingresa tus parámetros y presiona <strong>Calcular</strong> para obtener el ángulo óptimo.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diagrama + Gráfico diario -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> Posición del panel solar</div>
+        <div id="panel-diagram-wrap">
+          <svg id="panel-canvas-svg" viewBox="0 0 300 200">
+            <line x1="20" y1="175" x2="280" y2="175" stroke="#c5cfe0" stroke-width="2"/>
+            <line x1="150" y1="175" x2="150" y2="145" stroke="#8b9dc3" stroke-width="2.5"/>
+            <g id="d-panel-group" transform="translate(150,145) rotate(0)">
+              <rect x="-65" y="-8" width="130" height="50" rx="4" fill="#1a6fd4" stroke="#0f4fa8" stroke-width="1.5"/>
+              <rect x="-65" y="-8" width="130" height="50" rx="4" fill="url(#panelGrad)" opacity=".4"/>
+              <line x1="-65" y1="8"  x2="65" y2="8"  stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+              <line x1="-65" y1="25" x2="65" y2="25" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+              <line x1="-22" y1="-8" x2="-22" y2="42" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+              <line x1="22"  y1="-8" x2="22"  y2="42" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+            </g>
+            <path id="d-arc" d="M150,175 A35,35 0 0,0 185,165" fill="none" stroke="#27ae60" stroke-width="2" stroke-dasharray="4,3"/>
+            <text id="d-angle-label" x="188" y="160" fill="#27ae60" font-size="15" font-weight="700" font-family="Segoe UI,sans-serif">0°</text>
+            <circle cx="245" cy="45" r="22" fill="#f5a623" opacity=".85"/>
+            <g stroke="#f5a623" stroke-width="2.5" opacity=".6">
+              <line x1="245" y1="16" x2="245" y2="9"/>
+              <line x1="264" y1="26" x2="269" y2="20"/>
+              <line x1="272" y1="45" x2="279" y2="45"/>
+              <line x1="264" y1="64" x2="269" y2="69"/>
+              <line x1="226" y1="26" x2="221" y2="20"/>
+              <line x1="218" y1="45" x2="211" y2="45"/>
+            </g>
+            <line x1="235" y1="55" x2="150" y2="145" stroke="#f5a623" stroke-width="1.5" stroke-dasharray="5,4" opacity=".5"/>
+            <defs>
+              <linearGradient id="panelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fff" stop-opacity=".3"/>
+                <stop offset="100%" stop-color="#000" stop-opacity=".2"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="diagram-note" id="diagram-note">✅ Calcula para ver la posición óptima del panel.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> Radiación solar diaria estimada</div>
+        <div id="chart-wrap"><canvas id="daily-chart"></canvas></div>
+        <div class="chart-toggle">
+          <label class="toggle-sw">
+            <input type="checkbox" id="show-avg" onchange="toggleAvg()"/>
+            <span class="slider"></span>
+          </label>
+          Mostrar promedio mensual
+          <span style="flex:1"></span>
+          <span style="font-size:.75rem;color:#aab">— — promedio mensual</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barras de comparación -->
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Comparación: ángulo óptimo vs. ángulo fijo (30°)</div>
+      <div class="compare-wrap">
+        <div class="cmp-row">
+          <div class="cmp-label">Ángulo óptimo</div>
+          <div class="cmp-bar"><div class="cmp-fill opt" id="cmp-opt" style="width:0%">—</div></div>
+        </div>
+        <div class="cmp-row">
+          <div class="cmp-label">Ángulo fijo 30°</div>
+          <div class="cmp-bar"><div class="cmp-fill fix" id="cmp-fix" style="width:0%">—</div></div>
+        </div>
+      </div>
+      <div style="font-size:.78rem;color:var(--muted);margin-top:8px" id="cmp-note">Calcula primero para ver la comparación.</div>
+    </div>
+
+    <!-- Nota del modelo -->
+    <div class="model-note">
+      <span class="sun">☀️</span>
+      <div>
+        <strong>Modelo utilizado:</strong> La posición del sol se calcula mediante la declinación solar (δ) y la latitud (φ).<br>
+        <strong>Ángulo óptimo ≈ |Latitud − δ|</strong> &nbsp;•&nbsp;
+        δ varía entre −23.45° y +23.45° &nbsp;•&nbsp; E(θ) = E₀ · cos(θ − α).
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ PAGE: ANÁLISIS ════ -->
+  <div id="page-analisis" class="page">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Tabla de ángulos óptimos — todos los meses</div>
+      <p style="font-size:.83rem;color:var(--muted);margin-bottom:16px">
+        Latitud: <strong id="tabla-lat">—</strong>°. Ajusta en <em>Inicio</em> para recalcular.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Mes</th><th>Declinación δ (°)</th><th>Ángulo óptimo θ (°)</th>
+              <th>Irradiancia (kWh/m²/día)</th><th>Eficiencia relativa</th><th>Temporada</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Variación anual del ángulo óptimo</div>
+      <div style="height:280px;position:relative"><canvas id="annual-chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ════ PAGE: GRÁFICA ════ -->
+  <div id="page-grafica" class="page">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> Curva E(θ) = E₀ · cos(θ − α)</div>
+        <div id="eTheta-wrap"><canvas id="eTheta-chart"></canvas></div>
+        <p style="font-size:.78rem;color:var(--muted);margin-top:10px">
+          El punto naranja es el máximo θ* donde E'(θ) = 0.
+        </p>
+      </div>
+      <div class="math-box">
+        <h3>📐 Demostración con derivadas</h3>
+        <div class="math-step">
+          <div class="math-num">1</div>
+          <div class="math-content"><strong>Función de energía:</strong><br>
+            <code>E(θ) = E₀ · cos(θ − α)</code><br>
+            E₀ ≈ 1000 W/m², θ = ángulo del panel, α = elevación solar.</div>
+        </div>
+        <div class="math-step">
+          <div class="math-num">2</div>
+          <div class="math-content"><strong>Primera derivada</strong> (regla de la cadena):<br>
+            <code>E'(θ) = −E₀ · sen(θ − α)</code></div>
+        </div>
+        <div class="math-step">
+          <div class="math-num">3</div>
+          <div class="math-content"><strong>Punto crítico:</strong><br>
+            <code>E'(θ) = 0 ⟹ sen(θ−α) = 0 ⟹ <strong>θ* = α</strong></code></div>
+        </div>
+        <div class="math-step">
+          <div class="math-num">4</div>
+          <div class="math-content"><strong>Segunda derivada:</strong><br>
+            <code>E''(α) = −E₀·cos(0) = <strong>−E₀ &lt; 0</strong> ✓ Máximo</code></div>
+        </div>
+        <div class="math-step">
+          <div class="math-num">5</div>
+          <div class="math-content"><strong>Conclusión:</strong><br>
+            <code>θ* = α = |φ − δ|</code> maximiza la energía captada.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ PAGE: RECOMENDACIONES ════ -->
+  <div id="page-recomendaciones" class="page">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Recomendaciones prácticas</div>
+      <div class="rec-grid">
+        <div class="rec-card"><div class="rec-icon">🔧</div><h3>Panel ajustable estacionalmente</h3><p>Ajustar el ángulo cuatro veces al año puede aumentar la captación un 5–10% respecto a un ángulo fijo.</p></div>
+        <div class="rec-card"><div class="rec-icon">📍</div><h3>Considera tu latitud exacta</h3><p>A mayor latitud, mayor variación del ángulo óptimo entre verano e invierno.</p></div>
+        <div class="rec-card"><div class="rec-icon">☀️</div><h3>Orientación norte en el hemisferio sur</h3><p>En Chile y países del hemisferio sur, los paneles deben orientarse hacia el norte geográfico.</p></div>
+        <div class="rec-card"><div class="rec-icon">🌡️</div><h3>Temperatura y eficiencia</h3><p>Los paneles pierden ~0.4%/°C sobre 25°C. Un ángulo con ventilación puede compensar pérdidas térmicas.</p></div>
+        <div class="rec-card"><div class="rec-icon">💧</div><h3>Ángulo mínimo de autolimpieza</h3><p>Se recomienda un ángulo mínimo de 10–15° para que la lluvia limpie el polvo automáticamente.</p></div>
+        <div class="rec-card"><div class="rec-icon">📐</div><h3>Regla rápida: latitud ± 15°</h3><p>En invierno suma 15°, en verano resta 15° a tu latitud. Simple y efectivo.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ PAGE: INFO ════ -->
+  <div id="page-info" class="page">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> Marco matemático</div>
+        <div class="info-section">
+          <h3>Función de irradiancia</h3>
+          <div class="math-box" style="padding:14px 18px;margin:10px 0">
+            <code style="color:#7dd3fc;font-family:'Courier New',monospace">E(θ) = E₀ · cos(θ − α)</code>
+          </div>
+          <ul><li><strong>E₀</strong> ≈ 1000 W/m²</li><li><strong>θ</strong> = ángulo del panel</li><li><strong>α</strong> = elevación solar</li></ul>
+        </div>
+        <div class="info-section" style="margin-top:16px">
+          <h3>Declinación solar</h3>
+          <div class="math-box" style="padding:14px 18px;margin:10px 0">
+            <code style="color:#7dd3fc;font-family:'Courier New',monospace">δ = 23.45° · sen(360/365 · (d − 81))</code>
+          </div>
+        </div>
+        <div class="info-section" style="margin-top:16px">
+          <h3>Elevación solar</h3>
+          <div class="math-box" style="padding:14px 18px;margin:10px 0">
+            <code style="color:#7dd3fc;font-family:'Courier New',monospace">α = 90° − |φ − δ|</code>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> Cálculo diferencial aplicado</div>
+        <div class="info-section">
+          <h3>Primera derivada</h3>
+          <div class="math-box" style="padding:14px 18px;margin:10px 0">
+            <code style="color:#7dd3fc;font-family:'Courier New',monospace">E'(θ) = −E₀·sen(θ−α) = 0 ⟹ θ* = α</code>
+          </div>
+        </div>
+        <div class="info-section" style="margin-top:14px">
+          <h3>Segunda derivada</h3>
+          <div class="math-box" style="padding:14px 18px;margin:10px 0">
+            <code style="color:#7dd3fc;font-family:'Courier New',monospace">E''(α) = −E₀·cos(0) = −E₀ &lt; 0 ✓</code>
+          </div>
+        </div>
+        <div class="info-section" style="margin-top:14px">
+          <h3>Resultado final</h3>
+          <div class="math-box" style="padding:14px 18px;margin:10px 0">
+            <code style="color:#86efac;font-family:'Courier New',monospace;font-size:1.05em">θ* = |φ − δ|</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ PAGE: ACERCA ════ -->
+  <div id="page-acerca" class="page">
+    <div class="about-card">
+      <div class="logo-big">☀️</div>
+      <h2>Solar<span>Óptimo</span></h2>
+      <div class="sub">Proyecto de Cálculo Diferencial — CBCD01</div>
+      <div class="team-grid">
+        <div class="team-member"><div class="avatar">👤</div><div class="name">Nombre Apellido 1</div><div class="role">Integrante</div></div>
+        <div class="team-member"><div class="avatar">👤</div><div class="name">Nombre Apellido 2</div><div class="role">Integrante</div></div>
+        <div class="team-member"><div class="avatar">👤</div><div class="name">Nombre Apellido 3</div><div class="role">Integrante</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Sobre el proyecto</div>
+      <div class="info-section">
+        <h3>¿Qué hace esta app?</h3>
+        <p>SolarÓptimo calcula el ángulo de inclinación que maximiza la energía captada por un panel solar fotovoltaico, dado una latitud geográfica y un mes del año, usando E(θ) = E₀·cos(θ−α) y criterios de optimización con derivadas.</p>
+      </div>
+      <div class="info-section" style="margin-top:14px">
+        <h3>Tecnologías utilizadas</h3>
+        <ul>
+          <li>HTML5, CSS3, JavaScript (vanilla)</li>
+          <li>Chart.js para visualizaciones</li>
+          <li>Modelo astronómico de declinación solar (ecuación de Cooper)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ══════════════ SCRIPTS ══════════════ -->
+<script src="js/modelo.js"></script>
+<script src="js/ciudades.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
