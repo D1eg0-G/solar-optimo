@@ -16,9 +16,9 @@ function anguloOptimo(lat, mes) {
   const d     = MES_DIA[mes - 1];
   const delta = declinacion(d);
   const alpha = 90 - Math.abs(lat - delta);
-  const theta = Math.abs(lat - delta);
+  const theta = Math.max(0, parseFloat(alpha.toFixed(1)));;
   return {
-    theta: parseFloat(theta.toFixed(1)),
+    theta,
     delta: parseFloat(delta.toFixed(2)),
     alpha: parseFloat(alpha.toFixed(1))
   };
