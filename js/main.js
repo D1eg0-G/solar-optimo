@@ -113,11 +113,9 @@ function buildAnalysisPage() {
   MESES.forEach((mes, i) => {
     const { theta, delta, alpha } = anguloOptimo(lat, i + 1);
     const E   = irradiancia(theta, alpha);
-    const eff = eficienciaRelativa(theta, alpha);
     angulos.push(theta);
 
     const temporada = hemisurTemporada(i + 1, lat);
-    const badge     = eff > 85 ? 'high' : eff > 65 ? 'mid' : 'low';
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -125,15 +123,7 @@ function buildAnalysisPage() {
       <td>${delta}°</td>
       <td><strong>${theta}°</strong></td>
       <td>${E} kWh/m²/día</td>
-      <td>
-        <div class="bar-cell">
-          <div class="bar-track">
-            <div class="bar-fill" style="width:${eff}%"></div>
-          </div>
-          <span>${eff}%</span>
-        </div>
-      </td>
-      <td><span class="badge ${badge}">${temporada}</span></td>
+      <td>${temporada}</td>
     `;
     tbody.appendChild(tr);
   });
